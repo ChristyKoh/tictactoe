@@ -1,4 +1,13 @@
 h1 {
-	align:center
+	align:center;
+}
+
+div.gridbox {
+	background-color: grey;
+	display: inline-block;
+}
+
+div.gridbox:hover {
+	background-color: red;
 }
 

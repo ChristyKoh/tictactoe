@@ -5,41 +5,57 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <script src="script.js"></script>
+    <!-- Scripts -->
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.js"></script>
+	<script src="script.js"></script>
 
     <!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
-	<link rel="stylesheet" src="style.css">
+	<link rel="stylesheet" href="style.css">
 </head>
 
-<body ng-app="TicTacToe">
+<body ng-app="TicTacToe" ng-controller="Ctrl">
 	<header>
 		<h1>Tic Tac Toe</h1>
 	</header>
-	
-	
-	<div class="container">
 
-		<div ng-show="" id="intro">
-			<p>Welcome to Tic Tac Toe! This is a multiplayer game for 2+ players. Fill in the following fields and enjoy!</p>
+	<div id="intro" ng-hide="isInit">
+		<div class="container" >
+			<p>Welcome to Tic Tac Toe! This is a multiplayer game for 2+ players. Fill in the following fields to begin!</p>
 
-			Number of Players: <input type="number" name="playerNum" min="2"><br>
-			Grid Length: <input type="number" name="gridLen" min="3"><br>
-			Number in a Row to Win: <input type="number" name="winNum" min="3"><br>
+			Number of Players: <input type="number" name="playerNum" min="2" ng-model="n"><br>
+			Grid Length: <input type="number" name="gridLen" min="3" ng-model="m"><br>
+			Number in a Row to Win: <input type="number" name="winNum" min="3" ng-model="l"><br>
 
-			<button onclick="">Let's Go!</button>
+			<button ng-click="start()">Let's Go!</button>
 		</div>
 
 	</div>
 
-	<div class="gameview">
+	<div class="gameview" ng-show="isInit && !hasEnded">
 		<div class="container">
+
+			<!--display turn-->
+			<div class="display"><h3>It's Player {{turnCount % n}}'s turn!<h3></div>
+
+			<!--error-->
+			<div class="alert" ng-show="isTaken"><p>Sorry, that position is already occupied.</p></div>
+
 			<!--grid-->
-			<table class="gridbox">
-				
-			</table>
+			<div class="grid">
+				<div class="row" ng-repeat="row in grid track by $index"> 
+					<div class="gridbox " ng-repeat="col in row.col track by $index" ng-click="turn($parent.$index, $index)"></div>
+				</div>
+			</div>
+
 		</div>
 	</div>
+
+	<div class="gameover" ng-show="hasEnded">
+		<p id="end_message"></p>
+	</div>
+	
 
 </body>
 </html>
