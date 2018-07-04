@@ -1,13 +1,104 @@
-h1 {
+html, body {
+	background-color: #F1F1F1;
+	font-family: "ubuntu", serif;
+}
+
+h1, h3 {
+	text-align:center;
+}
+
+button {
 	align:center;
 }
 
-div.gridbox {
-	background-color: grey;
+.wrapper {
+	padding-top: 2%;
+	padding-bottom: 2%;
+	background-color: white;
+}
+
+.input {
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid #CCC;
+  color: #555;
+  box-sizing: border-box;
+  font-family: 'Arvo';
+  text-align:center;
+  width:50px;
+
+  &:focus {
+    outline: none;    
+  }
+  }
+
+input::-webkit-input-placeholder {
+  color: #AAA;
+}
+
+input:focus::-webkit-input-placeholder {
+  color: dodgerblue;
+}
+
+.input:focus+.underline {
+  transform: scale(1);
+}
+
+.underline {
+  background-color: dodgerblue;
+  display: inline-block;
+  height: 2px;
+  position: relative;
+  left:-50px;
+  top:8px;
+  -webkit-transform: scale(0, 1);
+  transform: scale(0, 1);
+  -webkit-transition: all 0.5s linear;
+  transition: all 0.5s linear;
+  width: 50px;
+}
+
+.alert {
+	background-color:#F1F1F1;
+	border: 3px red solid;
+	position:absolute;
+	top:40%;
+	text-align: center;
+}
+
+.gridbox {
 	display: inline-block;
+	position: relative;
+	border: black 6px solid;
+}
+
+div.gridbox:before{
+	content: "";
+	display: block;
+	padding-top: 100%; 	/* ratio of 1:1*/
+
 }
 
 div.gridbox:hover {
 	background-color: red;
 }
 
+.content{
+	position:  absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	text-align: center;
+
+}
+
+.end_message {
+	text-align: center;
+}
+
+.footer {
+	position:fixed;
+	bottom:0;
+	text-align:right;
+}
