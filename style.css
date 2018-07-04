@@ -1,23 +1,35 @@
 html, body {
 	background-color: #F1F1F1;
 	font-family: "ubuntu", serif;
+	overflow:hidden;
 }
 
-h1, h3 {
+h1, h3, p {
 	text-align:center;
 }
 
+header {
+	background-color: white;
+	padding: 1% 0 1% 0;
+}
+
 button {
-	align:center;
+	background-color: transparent;
+	color: #353535;
+	margin:0 auto;
+	margin-top:20px;
+    display:block;
 	border-radius: 3px;
+	border: 2px solid #353535;
 }
 
 .wrapper {
-	padding-top: 2%;
-	padding-bottom: 2%;
-	background-color: white;
+	padding: 2% 0 2% 0;
 	border-radius: 5px;
-	vertical-align: center;
+	position:relative;
+	display:block;
+	vertical-align: middle;
+	animation: slidein 1.5s forwards;
 }
 
 .input {
@@ -60,18 +72,11 @@ input:focus::-webkit-input-placeholder {
   width: 50px;
 }
 
-.alert {
-	background-color:#F1F1F1;
-	border: 3px red solid;
-	position:absolute;
-	top:40%;
-	text-align: center;
-}
-
 .gridbox {
 	display: inline-block;
 	position: relative;
-	border: black 6px solid;
+	border: black 3px solid;
+	transition: background-color 1s;
 }
 
 div.gridbox:before{
@@ -82,7 +87,7 @@ div.gridbox:before{
 }
 
 div.gridbox:hover {
-	background-color: red;
+	background-color: #f29191;
 }
 
 .content{
@@ -105,12 +110,31 @@ div.gridbox:hover {
 	width:auto;
 }
 
-.end_message {
-	text-align: center;
+#gameover {
+	text-align: center;    
+	position: relative;
+	display:block;
+    background-color:white;
+    top: -50%;
+    margin: 0 auto;
+    opacity: 0;
+    transition: opacity 2s;
+}
+
+
+@keyframes slidein {
+	0% { left: 100%;}
+    100% { left: 0; }
 }
 
 .footer {
+	background-color: white;
+	width:100%;
 	position:fixed;
 	bottom:0;
-	text-align:right;
+	padding: 1% 0 0 4%;
+}
+
+.footer p {
+	text-align:left;
 }

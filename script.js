@@ -1,7 +1,6 @@
 var app = angular.module('TicTacToe', []);
 
 
-
 app.filter('makeNonzero', function () {
 	//filter for displaying player number in grid
   return function (val) {
@@ -19,7 +18,6 @@ app.controller('Ctrl', function($scope, $timeout){
 
 	//Scope Variables
 	$scope.isInit = false;
-	$scope.isTaken = false;
 	$scope.isFin = false;
 	$scope.turnCount = 0;
 	$scope.currentPlayer = 1;
@@ -86,12 +84,10 @@ app.controller('Ctrl', function($scope, $timeout){
 
 		if($scope.grid[row][col].player > 0){
 			//exists, is in use
-			$scope.isTaken = true;
 			return false;
 		}
 		else {
-			//undefined, aka not taken
-			$scope.isTaken = false;
+			//0, aka not taken
 			return true;
 		}
 	}
@@ -188,19 +184,20 @@ app.controller('Ctrl', function($scope, $timeout){
 
 		//input validation
 		if($scope.n < 2){
-			alert("Please make sure the number of players is at least 2.")
+			alert("Please make sure the number of players is at least 2.");
 			return;
 		} 
 		if($scope.m < 3){
-			alert("Please make sure the grid length is at least 3.")
+			alert("Please make sure the grid length is at least 3.");
 			return;
 		} 
 		if($scope.l < 2){
-			alert("Please make sure the win condition is at least 3.")
+			alert("Please make sure the win condition is at least 3.");
 			return;
 		} 
 		if($scope.l > $scope.m){
-			alert("That's not going to work out... make sure the win number is less than or equal to the grid length.")
+			alert("Please make sure the win condition is less than or equal to the grid length.");
+			return;
 		}
 
 		//set custom gridbox width
@@ -227,22 +224,18 @@ app.controller('Ctrl', function($scope, $timeout){
 	} 
 
 
-	$scope.turn = function(elm, row, col){	
-		printGrid();
-		console.log($scope.icons[$scope.currentPlayer-1]);
+	$scope.turn = function(row, col){	
+
+		if($scope.isFin) return;
+
 		//if div has been chosen before, skip
 		if (!isVerified(row, col)) return;
 
 		$scope.grid[row][col].player = $scope.currentPlayer; //mark value with player number
 		$scope.grid[row][col].img = $scope.icons[$scope.currentPlayer-1]; //store src
 
-		console.log($scope.grid[row][col].img);
-
-		console.log($scope.turnCount);
-
 		//if not possible to get a winning sequence yet, skip check
 		if ($scope.turnCount < ($scope.n * ($scope.l - 1)) ) {
-			console.log("skipping check");
 			$scope.turnCount++;
 			$scope.currentPlayer = $scope.turnCount % $scope.n + 1
 			return;
@@ -250,14 +243,13 @@ app.controller('Ctrl', function($scope, $timeout){
 
 		//main check
 		if (hasWon(row, col)) { //player won
-			printGrid();
 			document.getElementById('end_message').textContent = "Congratulations to Player " + $scope.currentPlayer + "!";
-			console.log("A Player has won!");
+			document.getElementById('gameover').style.opacity = "0.9";
 			$scope.isFin = true;
 		}
 		else if ($scope.turnCount === Math.pow($scope.m, 2)-1){ //draw
 			document.getElementById('end_message').textContent = "It's a draw!";
-			console.log("It's a draw!");
+			document.getElementById('gameover').style.opacity = "0.9";
 			$scope.isFin = true;
 		}
 		else { //if max number of moves not yet reached, increment
@@ -266,10 +258,9 @@ app.controller('Ctrl', function($scope, $timeout){
 		}
 
 		return;
-
-		//on win, display turncount % n as winner
 		
 
 	}
+	
 
 });
