@@ -39,14 +39,15 @@
 		<div class="container">
 
 			<!--display turn-->
-			<div class="display"><h3>It's Player {{turnCount % n + 1}}'s turn!<h3></div>
+			<div class="display"><h3> <img ng-src="{{icons[currentPlayer-1]}}" style="height:30px"> It's Player {{currentPlayer}}'s turn! <img ng-src="{{icons[currentPlayer-1]}}" style="height:30px"> <h3></div>
 
 			<!--grid-->
 			<div class="grid">
 
 				<div class="row" ng-repeat="row in grid track by $index" ng-init="rowInd=$index"> 
-					<div class="gridbox" ng-repeat="col in row.col track by $index" ng-init="colInd=$index" ng-click="turn(this, $parent.$index, $index)">
-						<p class="content">{{grid[rowInd].col[colInd] | makeNonzero}}</p>
+					<div class="gridbox" ng-repeat="col in row track by $index" ng-init="colInd=$index" ng-click="turn(this, $parent.$index, $index)">
+						<img class="fruit" ng-src="{{grid[rowInd][colInd].img}}"/>
+						<p class="content">{{grid[rowInd][colInd].player | makeNonzero}}</p>
 					</div>
 				</div>
 

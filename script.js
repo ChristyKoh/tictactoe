@@ -1,5 +1,7 @@
 var app = angular.module('TicTacToe', []);
 
+
+
 app.filter('makeNonzero', function () {
 	//filter for displaying player number in grid
   return function (val) {
@@ -15,19 +17,26 @@ app.filter('makeNum', function(){
 
 app.controller('Ctrl', function($scope, $timeout){
 
+	//Scope Variables
 	$scope.isInit = false;
 	$scope.isTaken = false;
 	$scope.isFin = false;
 	$scope.turnCount = 0;
 	$scope.currentPlayer = 1;
-
-	//default input values
+	$scope.grid = []; //2D array for grid
+	$scope.icons = []; //store player icons
 	$scope.n = 2; //num of players
 	$scope.m = 3; //grid len
 	$scope.l = 3; //win len
 
-	$scope.grid = [];
+	//Image Src Array
+	var fruits = ["apple", "apple2", "avocado", "banana",  
+		"cherry", "grapes", "kiwi", "lemon", 
+		"melon", "orange", "peach", "pear", "pineapple", 
+		"strawberry", "tomato", "watermelon" ];
+	
 
+	//Watch functions
 	$scope.$watch('n', function() {
 		if (isNaN($scope.n)) $scope.n = 2;//enforce number with custom input
 	});
@@ -39,62 +48,43 @@ app.controller('Ctrl', function($scope, $timeout){
 	$scope.$watch('m', function() { 
 		
 		if (isNaN($scope.m)) $scope.m = 3;//enforce number with custom input
-
+		
 		//make sure gridboxes are rendered by AngularJS
         $scope.grid = [];
         for (var i=0; i<$scope.m; i++){
-        	$scope.grid.push({col:new Array(parseInt($scope.m)).fill(0)});
+        	$scope.grid.push(new Array());
+        	for(var j=0; j<$scope.m; j++){
+        		$scope.grid[i].push({img:"", player:0});
+       		}
+        	//console.log($scope.grid);
         }
+        
         
 	});
 
+	//Functions
 	var printGrid = function(){
 		var printStr;
 		for (var r=0; r<$scope.grid.length; r++){
 			printStr = "";
 			for (var c=0; c<$scope.grid.length; c++){
-				printStr += $scope.grid[r].col[c] + " ";
+				printStr += $scope.grid[r][c].player + " ";
 			}
 			console.log(printStr);
 		}
 	}
 
-	$scope.start = function(){
-
-		//input validation
-		if($scope.n < 2){
-			alert("Please make sure the number of players is at least 2.")
-			return;
-		} 
-		if($scope.m < 3){
-			alert("Please make sure the grid length is at least 3.")
-			return;
-		} 
-		if($scope.l < 2){
-			alert("Please make sure the win condition is at least 3.")
-			return;
-		} 
-
-		//set custom gridbox width
-		var boxes = document.querySelectorAll('.gridbox');
-		for(var i=0; i<boxes.length; i++){
-			if(i<$scope.m)	boxes[i].style.borderTop = "none";
-			if(i>boxes.length - $scope.m -1) boxes[i].style.borderBottom = "none";
-			if(i % $scope.m === 0) boxes[i].style.borderLeft = "none";
-			if(i % $scope.m === $scope.m-1) boxes[i].style.borderRight = "none";
-
-			boxes[i].style.width = 100 / $scope.m + "%"; //divide divs evenly
+	var printIconGrid = function(){
+		var icons = document.querySelectorAll('.fruit');
+		for(var i=0; i<icons.length; i++){
+			console.log(icons[i].src); //dynamic div width based on m
 		}
-
-		printGrid();
-		$scope.isInit = true;
-	
-	} 
+	}
 
 	var isVerified = function(row, col){
 		//verifies that pos is available to be used
 
-		if($scope.grid[row].col[col] > 0){
+		if($scope.grid[row][col].player > 0){
 			//exists, is in use
 			$scope.isTaken = true;
 			return false;
@@ -112,12 +102,12 @@ app.controller('Ctrl', function($scope, $timeout){
 		//check vertical
 		var count = 1;
 		for(var i=r-1; i>=0; i--){//check above
-			//console.log("checking row " + i + " w/ val " + $scope.grid[i].col[c]);
-			if ($scope.grid[i].col[c] === $scope.currentPlayer) count++;
+			//console.log("checking row " + i + " w/ val " + $scope.grid[i][c]);
+			if ($scope.grid[i][c].player === $scope.currentPlayer) count++;
 			else break;
 		}
 		for(var i=r+1; i<$scope.m; i++){//check below
-			if ($scope.grid[i].col[c] === $scope.currentPlayer) count++;
+			if ($scope.grid[i][c].player === $scope.currentPlayer) count++;
 			else break;
 		}
 		//console.log(count);
@@ -128,11 +118,11 @@ app.controller('Ctrl', function($scope, $timeout){
 		//check horizontal
 		var count = 1;
 		for(var i=c-1; i>=0; i--){//check left
-			if ($scope.grid[r].col[i] === $scope.currentPlayer) count++;
+			if ($scope.grid[r][i].player === $scope.currentPlayer) count++;
 			else break;
 		}
 		for(var i=c+1; i<$scope.m; i++){//check right
-			if ($scope.grid[r].col[i] === $scope.currentPlayer) count++;
+			if ($scope.grid[r][i].player === $scope.currentPlayer) count++;
 			else break;
 		}
 		//console.log(count);
@@ -145,18 +135,18 @@ app.controller('Ctrl', function($scope, $timeout){
 		for(var i=r-1; i>=0; i--){ //check upper right
 			//col number to check is equal to c + (r - i)
 			var col = c+r-i;
-			//console.log("UR checking row " + i + " and col" + col + " w/ val " + $scope.grid[i].col[col]);
+			//console.log("UR checking row " + i + " and col" + col + " w/ val " + $scope.grid[i][col]);
 			if (col >= $scope.m) break; //if col is out of range
-			if ($scope.grid[i].col[col] === $scope.currentPlayer) count++;
+			if ($scope.grid[i][col].player === $scope.currentPlayer) count++;
 			else break;	
 			//console.log("new count is "+count);
 		}
 		for(var i=r+1; i<$scope.m; i++){//check lower left
 			//col number to check is equal to c + (r - i)
 			var col = c+r-i;
-			//console.log("LL checking row " + i + " and col" + col + " w/ val " + $scope.grid[i].col[col]);
+			//console.log("LL checking row " + i + " and col" + col + " w/ val " + $scope.grid[i][col]);
 			if (col < 0) break; //if col is out of range
-			if ($scope.grid[i].col[col] === $scope.currentPlayer) count++;
+			if ($scope.grid[i][col].player === $scope.currentPlayer) count++;
 			else break; //if blank or !match then stop count
 			//console.log("new count is "+count);
 		}
@@ -170,18 +160,18 @@ app.controller('Ctrl', function($scope, $timeout){
 		for(var i=r-1; i>=0; i--){ //check upper left
 			//col number to check is equal to c - (r - i)
 			var col = c-r+i;
-			//console.log("UL checking row " + i + " and col" + col + " w/ val " + $scope.grid[i].col[col]);
+			//console.log("UL checking row " + i + " and col" + col + " w/ val " + $scope.grid[i][col]);
 			if (col < 0) break; //if col is out of range
-			if ($scope.grid[i].col[col] === $scope.currentPlayer) count++;
+			if ($scope.grid[i][col].player === $scope.currentPlayer) count++;
 			else break;	
 			//console.log("new count is "+count);
 		}
 		for(var i=r+1; i<$scope.m; i++){//check lower right
 			//col number to check is equal to c - (r - i)
 			var col = c-r+i;
-			//console.log("LR checking row " + i + " and col" + col + " w/ val " + $scope.grid[i].col[col]);
-			if (col > $scope.m) break; //if col is out of range
-			if ($scope.grid[i].col[col] === $scope.currentPlayer) count++;
+			console.log("LR checking row " + i + " and col" + col + " w/ val " + $scope.grid[i][col]);
+			if (col >= $scope.m) break; //if col is out of range
+			if ($scope.grid[i][col].player === $scope.currentPlayer) count++;
 			else break; //if blank or !match then stop count
 			//console.log("new count is "+count);
 		}
@@ -193,14 +183,62 @@ app.controller('Ctrl', function($scope, $timeout){
 		return false;
 	}
 
-	$scope.turn = function(elm, row, col){	
+	//Scope Functions
+	$scope.start = function(){
 
+		//input validation
+		if($scope.n < 2){
+			alert("Please make sure the number of players is at least 2.")
+			return;
+		} 
+		if($scope.m < 3){
+			alert("Please make sure the grid length is at least 3.")
+			return;
+		} 
+		if($scope.l < 2){
+			alert("Please make sure the win condition is at least 3.")
+			return;
+		} 
+		if($scope.l > $scope.m){
+			alert("That's not going to work out... make sure the win number is less than or equal to the grid length.")
+		}
+
+		//set custom gridbox width
+		var boxes = document.querySelectorAll('.gridbox');
+		for(var i=0; i<boxes.length; i++){
+			if(i<$scope.m)	boxes[i].style.borderTop = "none";
+			if(i>boxes.length - $scope.m -1) boxes[i].style.borderBottom = "none";
+			if(i % $scope.m === 0) boxes[i].style.borderLeft = "none";
+			if(i % $scope.m === $scope.m-1) boxes[i].style.borderRight = "none";
+
+			boxes[i].style.width = 100 / $scope.m + "%"; //dynamic div width based on m
+		}
+
+		//assign random image for each player
+		for(var i=0; i<$scope.n; i++){
+			var fruitIndex = Math.round(Math.random() * (fruits.length-1)); //to select random image
+			console.log(fruitIndex);
+			$scope.icons.push("png/" + fruits[fruitIndex] + ".png");
+			fruits.splice(fruitIndex, fruitIndex+1); //remove from array to prevent repeats
+		}
+
+		$scope.isInit = true;
+	
+	} 
+
+
+	$scope.turn = function(elm, row, col){	
+		printGrid();
+		console.log($scope.icons[$scope.currentPlayer-1]);
 		//if div has been chosen before, skip
 		if (!isVerified(row, col)) return;
 
-		$scope.grid[row].col[col] = $scope.currentPlayer; //mark value with player number
-		
-		//console.log($scope.turnCount);
+		$scope.grid[row][col].player = $scope.currentPlayer; //mark value with player number
+		$scope.grid[row][col].img = $scope.icons[$scope.currentPlayer-1]; //store src
+
+		console.log($scope.grid[row][col].img);
+
+		console.log($scope.turnCount);
 
 		//if not possible to get a winning sequence yet, skip check
 		if ($scope.turnCount < ($scope.n * ($scope.l - 1)) ) {
@@ -209,8 +247,6 @@ app.controller('Ctrl', function($scope, $timeout){
 			$scope.currentPlayer = $scope.turnCount % $scope.n + 1
 			return;
 		}
-
-		console.log($scope.turnCount);
 
 		//main check
 		if (hasWon(row, col)) { //player won
